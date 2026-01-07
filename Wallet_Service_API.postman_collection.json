@@ -1,0 +1,407 @@
+{
+	"info": {
+		"_postman_id": "wallet-service-api-2024",
+		"name": "Wallet Service API",
+		"description": "Complete API collection for testing the Wallet Service - includes wallet management, deposits, withdrawals, transfers, and transaction history.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"host": ["{{baseUrl}}"],
+					"path": ["health"]
+				},
+				"description": "Check if the API is running"
+			}
+		},
+		{
+			"name": "Wallets",
+			"item": [
+				{
+					"name": "Create Wallet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"owner_name\": \"John Doe\",\n  \"currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets"]
+						},
+						"description": "Create a new wallet with owner name and currency"
+					}
+				},
+				{
+					"name": "List All Wallets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets"]
+						},
+						"description": "Get all wallets with pagination"
+					}
+				},
+				{
+					"name": "List Wallets (Filtered by Owner)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets?owner_name=John",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets"],
+							"query": [
+								{
+									"key": "owner_name",
+									"value": "John"
+								}
+							]
+						},
+						"description": "Filter wallets by owner name"
+					}
+				},
+				{
+					"name": "List Wallets (Filtered by Currency)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets?currency=USD",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets"],
+							"query": [
+								{
+									"key": "currency",
+									"value": "USD"
+								}
+							]
+						},
+						"description": "Filter wallets by currency"
+					}
+				},
+				{
+					"name": "Get Wallet Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1"]
+						},
+						"description": "Get details of a specific wallet"
+					}
+				},
+				{
+					"name": "Get Wallet Balance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/balance",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "balance"]
+						},
+						"description": "Get current balance of a wallet"
+					}
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Deposit Funds",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "deposit-{{$timestamp}}",
+								"description": "Unique key for idempotency"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 10000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/deposit",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "deposit"]
+						},
+						"description": "Deposit funds into a wallet. Amount is in minor units (cents). 10000 = $100.00"
+					}
+				},
+				{
+					"name": "Deposit Funds (Duplicate - Test Idempotency)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "test-idempotency-key-123",
+								"description": "Same key for testing idempotency"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 10000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/deposit",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "deposit"]
+						},
+						"description": "Test idempotency by sending the same request twice with same Idempotency-Key"
+					}
+				},
+				{
+					"name": "Withdraw Funds",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "withdrawal-{{$timestamp}}",
+								"description": "Unique key for idempotency"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 3000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/withdraw",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "withdraw"]
+						},
+						"description": "Withdraw funds from a wallet. Amount in minor units (cents)."
+					}
+				},
+				{
+					"name": "Withdraw Funds (Insufficient Balance)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 99999999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/withdraw",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "withdraw"]
+						},
+						"description": "Test insufficient balance error"
+					}
+				}
+			]
+		},
+		{
+			"name": "Transfers",
+			"item": [
+				{
+					"name": "Transfer Between Wallets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "transfer-{{$timestamp}}",
+								"description": "Unique key for idempotency"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"source_wallet_id\": 1,\n  \"target_wallet_id\": 2,\n  \"amount\": 5000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/transfers",
+							"host": ["{{baseUrl}}"],
+							"path": ["transfers"]
+						},
+						"description": "Transfer funds atomically between two wallets"
+					}
+				},
+				{
+					"name": "Transfer (Same Currency Required)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"source_wallet_id\": 1,\n  \"target_wallet_id\": 3,\n  \"amount\": 5000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/transfers",
+							"host": ["{{baseUrl}}"],
+							"path": ["transfers"]
+						},
+						"description": "Test currency mismatch error (wallets must have same currency)"
+					}
+				},
+				{
+					"name": "Transfer (Test Idempotency)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "test-transfer-idempotency-456",
+								"description": "Same key for testing"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"source_wallet_id\": 1,\n  \"target_wallet_id\": 2,\n  \"amount\": 2000\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/transfers",
+							"host": ["{{baseUrl}}"],
+							"path": ["transfers"]
+						},
+						"description": "Test transfer idempotency - run twice with same key"
+					}
+				}
+			]
+		},
+		{
+			"name": "Transaction History",
+			"item": [
+				{
+					"name": "Get All Transactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/transactions",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "transactions"]
+						},
+						"description": "Get transaction history for a wallet"
+					}
+				},
+				{
+					"name": "Get Transactions (Filtered by Type)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/transactions?type=deposit",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "transactions"],
+							"query": [
+								{
+									"key": "type",
+									"value": "deposit",
+									"description": "deposit, withdrawal, transfer_debit, transfer_credit"
+								}
+							]
+						},
+						"description": "Filter transactions by type"
+					}
+				},
+				{
+					"name": "Get Transactions (Filtered by Date Range)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/transactions?from_date=2024-01-01&to_date=2024-12-31",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "transactions"],
+							"query": [
+								{
+									"key": "from_date",
+									"value": "2024-01-01"
+								},
+								{
+									"key": "to_date",
+									"value": "2024-12-31"
+								}
+							]
+						},
+						"description": "Filter transactions by date range"
+					}
+				},
+				{
+					"name": "Get Transactions (Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/wallets/1/transactions?per_page=10&page=1",
+							"host": ["{{baseUrl}}"],
+							"path": ["wallets", "1", "transactions"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Get paginated transaction history"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		}
+	]
+}
