@@ -242,8 +242,8 @@ Content-Type: application/json
     "currency": "USD",
     "balance": 0,
     "formatted_balance": "0.00",
-    "created_at": "2024-01-07T12:00:00.000000Z",
-    "updated_at": "2024-01-07T12:00:00.000000Z"
+    "created_at": "2024-01-07 12:00:00",
+    "updated_at": "2024-01-07 12:00:00"
   }
 }
 ```
@@ -270,8 +270,8 @@ GET /wallets?owner_name=John&currency=USD
       "currency": "USD",
       "balance": 10000,
       "formatted_balance": "100.00",
-      "created_at": "2024-01-07T12:00:00.000000Z",
-      "updated_at": "2024-01-07T12:05:00.000000Z"
+      "created_at": "2024-01-07 12:00:00",
+      "updated_at": "2024-01-07 12:05:00"
     }
   ],
   "links": { ... },
@@ -296,8 +296,8 @@ GET /wallets/{id}
     "currency": "USD",
     "balance": 10000,
     "formatted_balance": "100.00",
-    "created_at": "2024-01-07T12:00:00.000000Z",
-    "updated_at": "2024-01-07T12:05:00.000000Z"
+    "created_at": "2024-01-07 12:00:00",
+    "updated_at": "2024-01-07 12:05:00"
   }
 }
 ```
@@ -452,7 +452,7 @@ GET /wallets/{id}/transactions?type=deposit&from_date=2024-01-01&to_date=2024-01
       "formatted_amount": "100.00",
       "related_wallet_id": null,
       "metadata": null,
-      "created_at": "2024-01-07T12:00:00.000000Z"
+      "created_at": "2024-01-07 12:00:00"
     },
     {
       "id": 3,
@@ -465,7 +465,7 @@ GET /wallets/{id}/transactions?type=deposit&from_date=2024-01-01&to_date=2024-01
         "transfer_to": "Jane Smith",
         "transfer_to_wallet_id": 2
       },
-      "created_at": "2024-01-07T12:10:00.000000Z"
+      "created_at": "2024-01-07 12:10:00"
     }
   ],
   "links": { ... },
